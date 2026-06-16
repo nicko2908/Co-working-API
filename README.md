@@ -1,167 +1,587 @@
-ESTA API REST FUNCIONA EN LA SIGUIENTE URL: http://localhost:4000.
-INSTALAR DEPENDENCIAS CON npm install
+# 📚 Biblioteca API REST
 
-ENDPOINTS:
+API REST para gestión de biblioteca desarrollada con Node.js, Express y MongoDB.
 
-----MEMBERS-----
+---
 
-Método - Endpoint - Descripción
+## 🚀 Instalación
 
-GET - /api/members - Obtener todos los miembros
-GET - /api/members?status=active - Filtrar miembros activos
-GET - /api/members?status=inactive - Filtrar miembros inactivos
-GET - /api/members/:id - Obtener un miembro por ID
-POST - /api/members - Crear un nuevo miembro
-PUT - /api/members/:id - Actualizar un miembro
-DELETE - /api/members/:id - Eliminar un miembro
+```bash
+npm install
+```
 
-||EJEMPLO DE USO PARA ENDPOINT POST||
+Crea un archivo `.env` en la raíz del proyecto:
 
-http://localhost:4000/api/members
+```env
+MONGODB_URI=mongodb://localhost:27017/biblioteca
+PORT=4000
+NODE_ENV=development
+```
+
+```bash
+npm run dev
+```
+
+---
+
+## 📌 Base URL
+
+```
+http://localhost:4000/api
+```
+
+---
+
+## 🔐 Auth
+
+### POST `/api/auth/register`
+Registra un nuevo usuario con contraseña encriptada.
+
+**Request:**
+```json
 {
-  "name": "Carlos Gómez",
-  "email": "carlos@email.com",
-  "plan": "pro" ->SOLO ACEPTA 3 VALORES: basic, pro, enterprise
+  "nombre": "Juan Pérez",
+  "email": "juan@email.com",
+  "password": "123456",
+  "rol": "librarian"
 }
+```
 
-||RESULTADO EN MONGODB||
-
+**Response `201`:**
+```json
 {
   "success": true,
   "data": {
-    "_id": "664f1a2b3c4d5e6f7a8b9c0d",
-    "name": "Carlos Gómez",
-    "email": "carlos@email.com",
-    "plan": "pro",
-    "active": true,
-    "createdAt": "2025-05-19T10:00:00.000Z",
-    "updatedAt": "2025-05-19T10:00:00.000Z"
+    "_id": "664a1b2c3d4e5f6a7b8c9d0e",
+    "nombre": "Juan Pérez",
+    "email": "juan@email.com",
+    "rol": "librarian",
+    "createdAt": "2024-05-20T10:00:00.000Z",
+    "updatedAt": "2024-05-20T10:00:00.000Z"
   }
 }
+```
 
---------------
-----ROOMS-----
+---
 
-Método - Endpoint - Descripción
+### POST `/api/auth/login`
+Inicia sesión verificando credenciales con bcrypt.
 
-GET - /api/rooms - Obtener todas las salas
-GET - /api/rooms:id - Obtener una sala por ID
-POST - /api/rooms - Crear una nueva sala
-PUT - /api/rooms:id - Actualizar una sala
-DELETE - /api/rooms:id - Eliminar una sala
-
-||EJEMPLO DE USO PARA ENDPOINT POST||
-
-http://localhost:4000/api/rooms
+**Request:**
+```json
 {
-  "name": "Sala Innovación",
-  "capacity": 8,
-  "type": "meeting_room", -> SOLO ACEPTA 3 VALORES: private, shared, meeting_room
-  "pricePerHour": 25000
+  "email": "juan@email.com",
+  "password": "123456"
 }
+```
 
-||RESULTADO EN MONGODB||
-
+**Response `200`:**
+```json
 {
   "success": true,
   "data": {
-    "_id": "664f1a2b3c4d5e6f7a8b9c1e",
-    "name": "Sala Innovación",
-    "capacity": 8,
-    "type": "meeting_room",
-    "pricePerHour": 25000,
-    "createdAt": "2025-05-19T10:00:00.000Z",
-    "updatedAt": "2025-05-19T10:00:00.000Z"
+    "_id": "664a1b2c3d4e5f6a7b8c9d0e",
+    "nombre": "Juan Pérez",
+    "email": "juan@email.com",
+    "rol": "librarian"
   }
 }
+```
 
---------------
-----BOOKING-----
-
-Método - Endpoint - Descripción
-
-GET - /api/bookings - Obtener todas las reservas
-GET - /api/bookings?status=pending - Filtrar por estado
-GET - /api/bookings?roomId=:id - Filtrar por sala
-GET - /api/bookings?status=confirmed&roomId=:id - Filtrar por estado y sala
-GET - /api/bookings/:id - Obtener una reserva por ID
-POST - /api/bookings - Crear una nueva reserva
-PATCH - /api/bookings/:id/status - Cambiar el estado de una reserva
-
-||EJEMPLO DE USO PARA ENDPOINT POST||
-
-http://localhost:4000/api/bookings
+**Response `401` (credenciales inválidas):**
+```json
 {
-  "startDate": "2025-05-20T09:00:00.000Z",
-  "endDate": "2025-05-20T11:00:00.000Z",
-  "member": "664f1a2b3c4d5e6f7a8b9c0d",
-  "room": "664f1a2b3c4d5e6f7a8b9c1e",
-  "notes": "Reunión de equipo de diseño"
+  "success": false,
+  "message": "Credenciales inválidas"
 }
+```
 
-||RESULTADO EN MONGODB||
+---
 
+## ✍️ Authors
+
+### GET `/api/authors`
+Lista todos los autores.
+
+**Response `200`:**
+```json
 {
-  "_id": {
-    "$oid": "6a0d3d309bc6f0bacc274384"
-  },
-  "startDate": {
-    "$date": "2025-05-20T09:00:00.000Z"
-  },
-  "endDate": {
-    "$date": "2025-05-20T11:00:00.000Z"
-  },
-  "status": "pending",
-  "member": {
-    "$oid": "664f1a2b3c4d5e6f7a8b9c0d"
-  },
-  "room": {
-    "$oid": "664f1a2b3c4d5e6f7a8b9c1e"
-  },
-  "notes": "Reunión de equipo de diseño",
-  "createdAt": {
-    "$date": "2026-05-20T04:48:48.692Z"
-  },
-  "updatedAt": {
-    "$date": "2026-05-20T04:48:48.692Z"
-  },
-  "__v": 0
+  "success": true,
+  "data": [
+    {
+      "_id": "664a1b2c3d4e5f6a7b8c9d01",
+      "nombre": "Gabriel García Márquez",
+      "nacionalidad": "Colombiana",
+      "fechaNacimiento": "1927-03-06T00:00:00.000Z"
+    }
+  ]
 }
+```
 
-||EJEMPLO RESULTADO ARA ENDPOINT GET CON POPULATE||
+---
 
+### GET `/api/authors/:id`
+Obtiene un autor por ID.
 
+**Response `200`:**
+```json
 {
   "success": true,
   "data": {
-    "_id": "664f1a2b3c4d5e6f7a8b9c2f",
-    "startDate": "2025-05-20T09:00:00.000Z",
-    "endDate": "2025-05-20T11:00:00.000Z",
-    "status": "pending",
-    "member": {
-      "_id": "664f1a2b3c4d5e6f7a8b9c0d",
-      "name": "Carlos Gómez",
-      "email": "carlos@email.com",
-      "plan": "pro"
+    "_id": "664a1b2c3d4e5f6a7b8c9d01",
+    "nombre": "Gabriel García Márquez",
+    "nacionalidad": "Colombiana",
+    "fechaNacimiento": "1927-03-06T00:00:00.000Z"
+  }
+}
+```
+
+**Response `404`:**
+```json
+{
+  "success": false,
+  "message": "Autor no encontrado"
+}
+```
+
+---
+
+### POST `/api/authors`
+Crea un nuevo autor.
+
+**Request:**
+```json
+{
+  "nombre": "Gabriel García Márquez",
+  "nacionalidad": "Colombiana",
+  "fechaNacimiento": "1927-03-06"
+}
+```
+
+**Response `201`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d01",
+    "nombre": "Gabriel García Márquez",
+    "nacionalidad": "Colombiana",
+    "fechaNacimiento": "1927-03-06T00:00:00.000Z",
+    "createdAt": "2024-05-20T10:00:00.000Z",
+    "updatedAt": "2024-05-20T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+### PUT `/api/authors/:id`
+Actualiza un autor existente.
+
+**Request:**
+```json
+{
+  "nacionalidad": "Colombiano-Mexicana"
+}
+```
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d01",
+    "nombre": "Gabriel García Márquez",
+    "nacionalidad": "Colombiano-Mexicana",
+    "fechaNacimiento": "1927-03-06T00:00:00.000Z"
+  }
+}
+```
+
+---
+
+### DELETE `/api/authors/:id`
+Elimina un autor.
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "message": "Autor eliminado correctamente"
+}
+```
+
+---
+
+## 📖 Books
+
+### GET `/api/books`
+Lista todos los libros. Acepta filtros opcionales por query params.
+
+| Query Param | Descripción | Ejemplo |
+|---|---|---|
+| `genre` | Filtra por género | `?genre=fiction` |
+| `authorId` | Filtra por ID de autor | `?authorId=664a...` |
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "664a1b2c3d4e5f6a7b8c9d02",
+      "titulo": "Cien años de soledad",
+      "isbn": "978-0-06-088328-7",
+      "genero": "fiction",
+      "anio": 1967,
+      "copiasDisponibles": 5,
+      "author": "664a1b2c3d4e5f6a7b8c9d01"
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/books/:id`
+Obtiene un libro por ID con populate del autor.
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d02",
+    "titulo": "Cien años de soledad",
+    "isbn": "978-0-06-088328-7",
+    "genero": "fiction",
+    "anio": 1967,
+    "copiasDisponibles": 5,
+    "author": {
+      "_id": "664a1b2c3d4e5f6a7b8c9d01",
+      "nombre": "Gabriel García Márquez",
+      "nacionalidad": "Colombiana"
+    }
+  }
+}
+```
+
+---
+
+### POST `/api/books`
+Crea un nuevo libro.
+
+**Request:**
+```json
+{
+  "titulo": "Cien años de soledad",
+  "isbn": "978-0-06-088328-7",
+  "genero": "fiction",
+  "anio": 1967,
+  "copiasDisponibles": 5,
+  "author": "664a1b2c3d4e5f6a7b8c9d01"
+}
+```
+
+**Response `201`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d02",
+    "titulo": "Cien años de soledad",
+    "isbn": "978-0-06-088328-7",
+    "genero": "fiction",
+    "anio": 1967,
+    "copiasDisponibles": 5,
+    "author": "664a1b2c3d4e5f6a7b8c9d01",
+    "createdAt": "2024-05-20T10:00:00.000Z",
+    "updatedAt": "2024-05-20T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+### PUT `/api/books/:id`
+Actualiza un libro existente.
+
+**Request:**
+```json
+{
+  "copiasDisponibles": 10
+}
+```
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d02",
+    "titulo": "Cien años de soledad",
+    "copiasDisponibles": 10
+  }
+}
+```
+
+---
+
+### DELETE `/api/books/:id`
+Elimina un libro.
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "message": "Libro eliminado correctamente"
+}
+```
+
+---
+
+## 👤 Readers
+
+### GET `/api/readers`
+Lista todos los lectores.
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "664a1b2c3d4e5f6a7b8c9d03",
+      "nombre": "María López",
+      "email": "maria@email.com",
+      "membresia": "premium",
+      "activo": true
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/readers/:id`
+Obtiene un lector por ID.
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d03",
+    "nombre": "María López",
+    "email": "maria@email.com",
+    "membresia": "premium",
+    "activo": true
+  }
+}
+```
+
+---
+
+### POST `/api/readers`
+Crea un nuevo lector.
+
+**Request:**
+```json
+{
+  "nombre": "María López",
+  "email": "maria@email.com",
+  "membresia": "premium"
+}
+```
+
+**Response `201`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d03",
+    "nombre": "María López",
+    "email": "maria@email.com",
+    "membresia": "premium",
+    "activo": true,
+    "createdAt": "2024-05-20T10:00:00.000Z",
+    "updatedAt": "2024-05-20T10:00:00.000Z"
+  }
+}
+```
+
+---
+
+### PUT `/api/readers/:id`
+Actualiza un lector existente.
+
+**Request:**
+```json
+{
+  "membresia": "standard",
+  "activo": false
+}
+```
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d03",
+    "nombre": "María López",
+    "email": "maria@email.com",
+    "membresia": "standard",
+    "activo": false
+  }
+}
+```
+
+---
+
+### DELETE `/api/readers/:id`
+Elimina un lector.
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "message": "Lector eliminado correctamente"
+}
+```
+
+---
+
+## 📋 Loans
+
+### GET `/api/loans`
+Lista todos los préstamos con populate de Book y Reader. Acepta filtros opcionales.
+
+| Query Param | Descripción | Ejemplo |
+|---|---|---|
+| `status` | Filtra por estado | `?status=active` |
+| `genre` | Filtra por género del libro | `?genre=fiction` |
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "664a1b2c3d4e5f6a7b8c9d04",
+      "fechaPrestamo": "2024-05-20T00:00:00.000Z",
+      "fechaDevolucionEsperada": "2024-06-20T00:00:00.000Z",
+      "fechaDevuelto": null,
+      "estado": "active",
+      "book": {
+        "_id": "664a1b2c3d4e5f6a7b8c9d02",
+        "titulo": "Cien años de soledad",
+        "isbn": "978-0-06-088328-7"
+      },
+      "reader": {
+        "_id": "664a1b2c3d4e5f6a7b8c9d03",
+        "nombre": "María López",
+        "email": "maria@email.com"
+      }
+    }
+  ]
+}
+```
+
+---
+
+### GET `/api/loans/:id`
+Obtiene un préstamo por ID con populate completo de Book y Reader.
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d04",
+    "fechaPrestamo": "2024-05-20T00:00:00.000Z",
+    "fechaDevolucionEsperada": "2024-06-20T00:00:00.000Z",
+    "fechaDevuelto": null,
+    "estado": "active",
+    "notas": "Préstamo especial",
+    "book": {
+      "_id": "664a1b2c3d4e5f6a7b8c9d02",
+      "titulo": "Cien años de soledad",
+      "genero": "fiction"
     },
-    "room": {
-      "_id": "664f1a2b3c4d5e6f7a8b9c1e",
-      "name": "Sala Innovación",
-      "type": "meeting_room",
-      "pricePerHour": 25000
-    },
-    "notes": "Reunión de equipo de diseño",
-    "createdAt": "2025-05-19T10:00:00.000Z",
-    "updatedAt": "2025-05-19T10:00:00.000Z"
+    "reader": {
+      "_id": "664a1b2c3d4e5f6a7b8c9d03",
+      "nombre": "María López",
+      "membresia": "premium"
+    }
   }
 }
+```
 
-||EJEMPLO DE USO PARA PATCH||
+---
 
+### POST `/api/loans`
+Crea un nuevo préstamo. Valida que `fechaDevolucionEsperada` sea posterior a `fechaPrestamo`.
+
+**Request:**
+```json
 {
-  "status": "confirmed"
+  "fechaPrestamo": "2024-05-20",
+  "fechaDevolucionEsperada": "2024-06-20",
+  "book": "664a1b2c3d4e5f6a7b8c9d02",
+  "reader": "664a1b2c3d4e5f6a7b8c9d03",
+  "notas": "Préstamo especial"
 }
+```
 
-CAMBIA EL STATUS DE PENDING A CONFIRMED 
+**Response `201`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d04",
+    "fechaPrestamo": "2024-05-20T00:00:00.000Z",
+    "fechaDevolucionEsperada": "2024-06-20T00:00:00.000Z",
+    "fechaDevuelto": null,
+    "estado": "active",
+    "notas": "Préstamo especial",
+    "book": "664a1b2c3d4e5f6a7b8c9d02",
+    "reader": "664a1b2c3d4e5f6a7b8c9d03",
+    "createdAt": "2024-05-20T10:00:00.000Z",
+    "updatedAt": "2024-05-20T10:00:00.000Z"
+  }
+}
+```
 
---------------
+**Response `400` (fecha inválida):**
+```json
+{
+  "success": false,
+  "message": "La fecha de devolución esperada debe ser posterior a la fecha de préstamo"
+}
+```
+
+---
+
+### PATCH `/api/loans/:id/status`
+Cambia únicamente el estado del préstamo.
+
+**Request:**
+```json
+{
+  "estado": "returned"
+}
+```
+
+**Response `200`:**
+```json
+{
+  "success": true,
+  "data": {
+    "_id": "664a1b2c3d4e5f6a7b8c9d04",
+    "estado": "returned",
+    "fechaPrestamo": "2024-05-20T00:00:00.000Z",
+    "fechaDevolucionEsperada": "2024-06-20T00:00:00.000Z"
+  }
+}
+```
